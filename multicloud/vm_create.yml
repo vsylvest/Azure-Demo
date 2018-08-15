@@ -84,4 +84,4 @@
             offer: WindowsServer
             sku: Windows-Server-Technical-Preview
             version: latest
-          register: output	
+          register: output
