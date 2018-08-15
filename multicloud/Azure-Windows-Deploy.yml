@@ -4,22 +4,25 @@
 # This playbook creates an EC2 VM with public IP, and assign to security group with port 22 open.
 
 ---
-- name : Simple playbook
+- name : Deploy Windows on Azure
   hosts: localhost 
   gather_facts: False
-  vars:
+  vars: 
+    resource_group: AnsibleDemo
+    vm_name: MSW2016
+    location: australiacentral
   tasks:
     - block:
       - name: Azure Create virtual network
         azure_rm_virtualnetwork:
           resource_group: "{{ resource_group }}"
           name: "{{ vm_name }}"
-          address_prefixes: "10.0.0.0/16"
+          address_prefixes: "20.0.0.0/16"
       - name: Azure Add subnet
         azure_rm_subnet:
           resource_group: "{{ resource_group }}"
           name: "{{ vm_name }}"
-          address_prefix: "10.0.1.0/24"
+          address_prefix: "20.0.1.0/24"
           virtual_network: "{{ vm_name }}"
       - name: Azure Create Network Security Group that allows SSH
         azure_rm_securitygroup:

@@ -1,0 +1,9 @@
+---
+- name:  Basic Windows Playbook
+  hosts: 
+    mswin
+  tasks:
+    - name: install putty
+      win_chocolatey: 
+        name: putty.install
+        state: present
