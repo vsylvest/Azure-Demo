@@ -1,0 +1,30 @@
+# Description
+# ===========
+# This playbook create an Azure VM with public IP, and open 22 port for SSH
+# This playbook creates an EC2 VM with public IP, and assign to security group with port 22 open.
+
+---
+- name : Deploy Windows on Azure
+  hosts: localhost 
+  gather_facts: False
+  vars: 
+    resource_group: mswin
+    vm_name: MSW2016
+    resource_group: ansibletower
+    location: australiacentral
+  tasks:
+    - block:
+      - name: set fact for Extension Code
+        set_fact:
+          winrm_enable_script: SQBuAHYAbwBrAGUALQBFAHgAcAByAGUAcwBzAGkAbwBuACAALQBDAG8AbQBtAGEAbgBkACAAKAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABTAHkAcwB0AGUAbQAuAE4AZQB0AC4AVwBlAGIAQwBsAGkAZQBuAHQAKQAuAEQAbwB3AG4AbABvAGEAZABTAHQAcgBpAG4AZwAoACcAaAB0AHQAcABzADoALwAvAHIAYQB3AC4AZwBpAHQAaAB1AGIAdQBzAGUAcgBjAG8AbgB0AGUAbgB0AC4AYwBvAG0ALwBhAG4AcwBpAGIAbABlAC8AYQBuAHMAaQBiAGwAZQAvAGQAZQB2AGUAbAAvAGUAeABhAG0AcABsAGUAcwAvAHMAYwByAGkAcAB0AHMALwBDAG8AbgBmAGkAZwB1AHIAZQBSAGUAbQBvAHQAaQBuAGcARgBvAHIAQQBuAHMAaQBiAGwAZQAuAHAAcwAxACcAKQApADsAIABFAG4AYQBiAGwAZQAtAFcAUwBNAGEAbgBDAHIAZQBkAFMAUwBQACAALQBSAG8AbABlACAAUwBlAHIAdgBlAHIAIAAtAEYAbwByAGMAZQA=	
+      
+      - name: create Azure vm extension to enable HTTPS WinRM listener
+        azure_rm_virtualmachine_extension:
+          name: winrm-extension
+          resource_group: "{{ resource_group }}"
+          virtual_machine_name: mswin
+          publisher: Microsoft.Compute
+          virtual_machine_extension_type: CustomScriptExtension
+          type_handler_version: 1.9
+          settings: '{"commandToExecute": "powershell.exe -ExecutionPolicy ByPass -EncodedCommand {{winrm_enable_script}}"}'
+          auto_upgrade_minor_version: true
