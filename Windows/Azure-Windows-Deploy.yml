@@ -1,7 +1,6 @@
 # Description
 # ===========
-# This playbook create an Azure VM with public IP, and open 22 port for SSH
-# This playbook creates an EC2 VM with public IP, and assign to security group with port 22 open.
+# This playbook create a Windows Server VM in Azure with ports open for ssh, rdp and winrm
 
 ---
 - name : Deploy Windows on Azure

@@ -1,3 +1,7 @@
+# Description
+# ===========
+# This playbook install putty on Windows hosts
+
 ---
 - name:  Basic Windows Playbook
   hosts: 
