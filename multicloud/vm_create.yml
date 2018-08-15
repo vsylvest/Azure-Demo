@@ -71,17 +71,16 @@
         azure_rm_virtualmachine:
           resource_group: "{{ resource_group }}"
           name: mswin
-          vm_size: Standard_D1  
-          admin_username: ec2-user
-          admin_password: Password@12
+          vm_size: Standard_A0
+          admin_username: ec2-user 
+          admin_password: Password@123
           network_interfaces: mswin
           tags:
             tag_ansible_group : mswin
             network_interfaces: mswin
-          os_type: Windows
           image:
-            publisher: MicrosoftWindowsServer
             offer: WindowsServer
-            sku: Windows-Server-Technical-Preview
+            publisher: MicrosoftWindowsServer 
+            sku: '2016-Datacenter'
             version: latest
-          register: output
+        register: output	
