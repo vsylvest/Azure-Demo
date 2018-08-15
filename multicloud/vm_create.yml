@@ -56,27 +56,27 @@
         azure_rm_publicipaddress:
           resource_group: "{{ resource_group }}"
           allocation_method: Static
-          name: Windemo
+          name: mswin
 
       - name: Create windows virtual network inteface card
         azure_rm_networkinterface:
           resource_group: "{{ resource_group }}"
-          name: Windemo
+          name: mswin
           virtual_network: "{{ vm_name }}"
           subnet: "{{ vm_name }}"
-          public_ip_name: Windemo
+          public_ip_name: mswin
           security_group: "{{ vm_name }}"
 
       - name: Aure Create windows VM
         azure_rm_virtualmachine:
           resource_group: "{{ resource_group }}"
-          name: Windemo
+          name: mswin
           vm_size: Standard_A0
           admin_username: ec2-user 
           admin_password: Password@123
           tags:
-            tag_ansible_group : Windemo
-            network_interfaces: Windemo
+            tag_ansible_group : mswin
+            network_interfaces: mswin
           image:
             offer: WindowsServer
             publisher: MicrosoftWindowsServer 
