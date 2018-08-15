@@ -8,9 +8,6 @@
   hosts: localhost 
   gather_facts: False
   vars:
-    azurewebservers:
-      - { vmname: 'webserver1', nic: 'webserver1' }
-      - { vmname: 'webserver2', nic: 'webserver2' }
   tasks:
     - block:
       - name: Azure Create virtual network
@@ -59,27 +56,27 @@
         azure_rm_publicipaddress:
           resource_group: "{{ resource_group }}"
           allocation_method: Static
-          name: windows
+          name: Windemo
 
       - name: Create windows virtual network inteface card
         azure_rm_networkinterface:
           resource_group: "{{ resource_group }}"
-          name: windows
+          name: Windemo
           virtual_network: "{{ vm_name }}"
           subnet: "{{ vm_name }}"
-          public_ip_name: windows
+          public_ip_name: Windemo
           security_group: "{{ vm_name }}"
 
       - name: Aure Create windows VM
         azure_rm_virtualmachine:
           resource_group: "{{ resource_group }}"
-          name: windows
+          name: Windemo
           vm_size: Standard_A0
           admin_username: ec2-user 
           admin_password: Password@123
           tags:
-            tag_ansible_group : windows
-            network_interfaces: windows
+            tag_ansible_group : Windemo
+            network_interfaces: Windemo
           image:
             offer: WindowsServer
             publisher: MicrosoftWindowsServer 
