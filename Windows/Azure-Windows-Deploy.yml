@@ -1,13 +1,12 @@
 # Description
 # ===========
-# This playbook create a Windows Server VM in Azure with ports open for ssh, rdp and winrm
+# This playbook create a Windows Server VM in Azure with ports open for ssh, http(s), rdp and winrm
 
 ---
 - name : Deploy Windows on Azure
   hosts: localhost 
   gather_facts: False
   vars: 
-    resource_group: mswin
     vm_name: MSW2016
     resource_group: ansibletower
     location: australiacentral
