@@ -67,7 +67,7 @@
           public_ip_name: mswin
           security_group: "{{ vm_name }}"
 
-      - name: Aure Create windows VM
+      - name: Azure Create windows VM
         azure_rm_virtualmachine:
           resource_group: "{{ resource_group }}"
           name: mswin
@@ -77,10 +77,5 @@
           network_interfaces: mswin
           tags:
             tag_ansible_group : mswin
-            network_interfaces: mswin
-          image:
-            offer: WindowsServer
-            publisher: MicrosoftWindowsServer 
-            sku: '2016-Datacenter'
-            version: latest
+          image: win2016datacenter
         register: output	
