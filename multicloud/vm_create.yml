@@ -50,7 +50,12 @@
               access: Allow
               priority: 1004
               direction: Inbound
-
+            - name: RDP
+              protocol: Tcp
+              destination_port_range: 3389
+              access: Allow
+              priority: 1004
+              direction: Inbound
       # Create windows
       - name: Create windows public IP address
         azure_rm_publicipaddress:
