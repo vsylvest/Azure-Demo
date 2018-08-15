@@ -1,0 +1,196 @@
+# Description
+# ===========
+# This playbook create an Azure VM with public IP, and open 22 port for SSH
+# This playbook creates an EC2 VM with public IP, and assign to security group with port 22 open.
+
+---
+- name : Simple playbook
+  hosts: localhost 
+  gather_facts: False
+  vars:
+    cloud_provider: ''
+    azurewebservers:
+      - { vmname: 'webserver1', nic: 'webserver1' }
+      - { vmname: 'webserver2', nic: 'webserver2' }
+
+    dynamic_inventory_tag: []
+
+  tasks:
+    - block:
+      - name: Azure Create virtual network
+        azure_rm_virtualnetwork:
+          resource_group: "{{ resource_group }}"
+          name: "{{ vm_name }}"
+          address_prefixes: "10.0.0.0/16"
+      - name: Azure Add subnet
+        azure_rm_subnet:
+          resource_group: "{{ resource_group }}"
+          name: "{{ vm_name }}"
+          address_prefix: "10.0.1.0/24"
+          virtual_network: "{{ vm_name }}"
+      - name: Azure Create Network Security Group that allows SSH
+        azure_rm_securitygroup:
+          resource_group: "{{ resource_group }}"
+          name: "{{ vm_name }}"
+          rules:
+            - name: SSH
+              protocol: Tcp
+              destination_port_range: 22
+              access: Allow
+              priority: 1001
+              direction: Inbound
+            - name: HTTP
+              protocol: Tcp
+              destination_port_range: 80
+              access: Allow
+              priority: 1002
+              direction: Inbound
+            - name: HTTPS
+              protocol: Tcp
+              destination_port_range: 443
+              access: Allow
+              priority: 1003
+              direction: Inbound
+            - name: LB
+              protocol: Tcp
+              destination_port_range: 8888
+              access: Allow
+              priority: 1004
+              direction: Inbound
+
+      # Create Webserver
+      - name: Azure Create Webserver public IP address
+        azure_rm_publicipaddress:
+          resource_group: "{{ resource_group }}"
+          allocation_method: Static
+          name: "{{ item.vmname }}IP"
+        with_items : "{{ azurewebservers }}"
+      - name: Azure Create Webserver virtual network inteface card
+        azure_rm_networkinterface:
+          resource_group: "{{ resource_group }}"
+          name: "{{ item.vmname }}NIC"
+          virtual_network: "{{ vm_name }}"
+          subnet: "{{ vm_name }}"
+          public_ip_name: "{{ item.vmname }}IP"
+          security_group: "{{ vm_name }}"
+        with_items : "{{ azurewebservers }}"
+      - name: Azure Create Webserver VM
+        azure_rm_virtualmachine:
+          resource_group: "{{ resource_group }}"
+          name: "{{ item.vmname }}VM"
+          vm_size: Standard_DS1_v2
+          admin_username: ec2-user
+          admin_password: Password@123
+          tags:
+            tag_ansible_group : webservers
+          ssh_public_keys:
+            - path: /home/ec2-user/.ssh/authorized_keys
+              key_data: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQClKymYHNpAnt+WNwkQglhYNRb8dnFOyxduXORciKkb7fGE1li1MokcL9lgGmRPacueI3ssSvjvZzXBT0p2H2jrNfRKvI7vLTBIPq/cfVzBbYgSselELb0IMob5AKht/FS6k++Obmz5GZj+HLzBwDTTEwTJfWu+joc2dTdOWtiFQjzQJLjzyFGR/Kt5WtucS62rfPGp1jqqZ75EmxfiRJaGziTgdO8Nns/9fMpUanqYF0LOWhuK+RJK3YDPo40PIpiykNgqss+s/tID4qwfonl7/JJWoHyYTRGK+c7xV2FukGIH4eLy3+ufEI4JVMR7GLEQljVo1AvwF66mnyoemuur etg-richard 
+          network_interfaces: "{{ item.vmname }}NIC"
+          image:
+            offer: RHEL
+            publisher: RedHat
+            sku: 7.3
+            version: latest
+        with_items: "{{ azurewebservers }}"
+
+      # Create dbserver
+      - name: Azure Create dbserver public IP address
+        azure_rm_publicipaddress:
+          resource_group: "{{ resource_group }}"
+          allocation_method: Static
+          name: dbserver
+      - name: Azure Create dbserver virtual network inteface card
+        azure_rm_networkinterface:
+          resource_group: "{{ resource_group }}"
+          name: dbserver
+          virtual_network: "{{ vm_name }}"
+          subnet: "{{ vm_name }}"
+          public_ip_name: dbserver
+          security_group: "{{ vm_name }}"
+      - name: Azure Create dbserver VM
+        azure_rm_virtualmachine:
+          resource_group: "{{ resource_group }}"
+          name: dbserver
+          vm_size: Standard_DS1_v2
+          admin_username: ec2-user 
+          admin_password: Password@123
+          tags:
+            tag_ansible_group : dbservers
+          ssh_public_keys:
+            - path: /home/ec2-user/.ssh/authorized_keys
+              key_data: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQClKymYHNpAnt+WNwkQglhYNRb8dnFOyxduXORciKkb7fGE1li1MokcL9lgGmRPacueI3ssSvjvZzXBT0p2H2jrNfRKvI7vLTBIPq/cfVzBbYgSselELb0IMob5AKht/FS6k++Obmz5GZj+HLzBwDTTEwTJfWu+joc2dTdOWtiFQjzQJLjzyFGR/Kt5WtucS62rfPGp1jqqZ75EmxfiRJaGziTgdO8Nns/9fMpUanqYF0LOWhuK+RJK3YDPo40PIpiykNgqss+s/tID4qwfonl7/JJWoHyYTRGK+c7xV2FukGIH4eLy3+ufEI4JVMR7GLEQljVo1AvwF66mnyoemuur etg-richard 
+          network_interfaces: dbserver
+          image:
+            offer: RHEL
+            publisher: RedHat 
+            sku: 7.3 
+            version: latest
+
+      # Create load balancer
+      - name: Create load balancer public IP address
+        azure_rm_publicipaddress:
+          resource_group: "{{ resource_group }}"
+          allocation_method: Static
+          name: lbservers
+      - name: Create load balancer virtual network inteface card
+        azure_rm_networkinterface:
+          resource_group: "{{ resource_group }}"
+          name: lbservers
+          virtual_network: "{{ vm_name }}"
+          subnet: "{{ vm_name }}"
+          public_ip_name: lbservers
+          security_group: "{{ vm_name }}"
+      - name: Azure Create load balancer VM
+        azure_rm_virtualmachine:
+          resource_group: "{{ resource_group }}"
+          name: lbservers
+          vm_size: Standard_DS1_v2
+          admin_username: ec2-user 
+          admin_password: Password@123
+          tags:
+            tag_ansible_group : lbservers
+          ssh_public_keys:
+            - path: /home/ec2-user/.ssh/authorized_keys
+              key_data: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQClKymYHNpAnt+WNwkQglhYNRb8dnFOyxduXORciKkb7fGE1li1MokcL9lgGmRPacueI3ssSvjvZzXBT0p2H2jrNfRKvI7vLTBIPq/cfVzBbYgSselELb0IMob5AKht/FS6k++Obmz5GZj+HLzBwDTTEwTJfWu+joc2dTdOWtiFQjzQJLjzyFGR/Kt5WtucS62rfPGp1jqqZ75EmxfiRJaGziTgdO8Nns/9fMpUanqYF0LOWhuK+RJK3YDPo40PIpiykNgqss+s/tID4qwfonl7/JJWoHyYTRGK+c7xV2FukGIH4eLy3+ufEI4JVMR7GLEQljVo1AvwF66mnyoemuur etg-richard 
+          network_interfaces: lbservers
+          image:
+            offer: RHEL
+            publisher: RedHat 
+            sku: 7.3 
+            version: latest
+
+      # Create windows
+      - name: Create windows public IP address
+        azure_rm_publicipaddress:
+          resource_group: "{{ resource_group }}"
+          allocation_method: Static
+          name: windows
+
+      - name: Create windows virtual network inteface card
+        azure_rm_networkinterface:
+          resource_group: "{{ resource_group }}"
+          name: windows
+          virtual_network: "{{ vm_name }}"
+          subnet: "{{ vm_name }}"
+          public_ip_name: windows
+          security_group: "{{ vm_name }}"
+
+      - name: Aure Create windows VM
+        azure_rm_virtualmachine:
+          resource_group: "{{ resource_group }}"
+          name: windows
+          vm_size: Standard_A0
+          admin_username: ec2-user 
+          admin_password: Password@123
+          tags:
+            tag_ansible_group : windows
+            network_interfaces: windows
+          image:
+            offer: WindowsServer
+            publisher: MicrosoftWindowsServer 
+            sku: '2016-Datacenter'
+            version: latest
+        register: output
+
+      when: cloud_provider == 'azure'
