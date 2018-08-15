@@ -56,6 +56,19 @@
               access: Allow
               priority: 1004
               direction: Inbound
+            - name: WINRM
+              protocol: Tcp
+              destination_port_range: 5985
+              access: Allow
+              priority: 1004
+              direction: Inbound
+            - name: WINRMs
+              protocol: Tcp
+              destination_port_range: 5986
+              access: Allow
+              priority: 1004
+              direction: Inbound
+              
       # Create windows
       - name: Create windows public IP address
         azure_rm_publicipaddress:
