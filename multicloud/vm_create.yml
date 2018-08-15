@@ -8,7 +8,9 @@
   hosts: localhost 
   gather_facts: False
   vars:
+    azurewebservers:
       - { vmname: 'webserver1', nic: 'webserver1' }
+      - { vmname: 'webserver2', nic: 'webserver2' }
   tasks:
     - block:
       - name: Azure Create virtual network
@@ -185,4 +187,4 @@
             publisher: MicrosoftWindowsServer 
             sku: '2016-Datacenter'
             version: latest
-        register: output
+        register: output	
