@@ -25,7 +25,8 @@
           name: "{{ vm_name }}"
           address_prefix: "20.0.1.0/24"
           virtual_network: "{{ vm_name }}"
-      - name: Azure Create Network Security Group that allows SSH
+
+      - name: Azure Create Network Security Group that allows SSH and Windows Ports
         azure_rm_securitygroup:
           resource_group: "{{ resource_group }}"
           name: "{{ vm_name }}"
