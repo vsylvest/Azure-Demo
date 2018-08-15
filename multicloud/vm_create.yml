@@ -8,13 +8,9 @@
   hosts: localhost 
   gather_facts: False
   vars:
-    cloud_provider: ''
     azurewebservers:
       - { vmname: 'webserver1', nic: 'webserver1' }
       - { vmname: 'webserver2', nic: 'webserver2' }
-
-    dynamic_inventory_tag: []
-
   tasks:
     - block:
       - name: Azure Create virtual network
@@ -192,5 +188,3 @@
             sku: '2016-Datacenter'
             version: latest
         register: output
-
-      when: cloud_provider == 'azure'
