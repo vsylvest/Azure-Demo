@@ -58,19 +58,19 @@
               protocol: Tcp
               destination_port_range: 3389
               access: Allow
-              priority: 1004
+              priority: 500
               direction: Inbound
             - name: WINRM
               protocol: Tcp
               destination_port_range: 5985
               access: Allow
-              priority: 1004
+              priority: 501
               direction: Inbound
             - name: WINRMs
               protocol: Tcp
               destination_port_range: 5986
               access: Allow
-              priority: 1004
+              priority: 502
               direction: Inbound
               
       # Create windows
