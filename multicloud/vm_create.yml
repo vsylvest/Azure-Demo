@@ -71,7 +71,7 @@
         azure_rm_virtualmachine:
           resource_group: "{{ resource_group }}"
           name: mswin
-          vm_size: Standard_A0
+          vm_size: B2s
           admin_username: ec2-user 
           admin_password: Password@123
           network_interfaces: mswin
