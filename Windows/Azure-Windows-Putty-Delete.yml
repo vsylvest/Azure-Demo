@@ -1,0 +1,13 @@
+# Description
+# ===========
+# This playbook deletes putty on Windows hosts
+
+---
+- name:  Basic Windows Playbook
+  hosts:
+    azwin
+  tasks:
+    - name: uninstall putty
+      win_chocolatey: 
+        name: putty.install
+        state: absent
