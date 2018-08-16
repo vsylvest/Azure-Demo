@@ -6,6 +6,9 @@
 - name:  Basic Windows Playbook
   hosts:
     azwin
+  vars:
+    ansible_connection: winrm
+    ansible_winrm_server_cert_validation: ignore
   tasks:
     - name: uninstall putty
       win_chocolatey: 

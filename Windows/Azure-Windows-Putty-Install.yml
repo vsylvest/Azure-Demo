@@ -4,8 +4,11 @@
 
 ---
 - name:  Basic Windows Playbook
-  hosts: 
-    mswin
+  hosts:
+    azwin
+  vars:
+    ansible_connection: winrm
+    ansible_winrm_server_cert_validation: ignore
   tasks:
     - name: install putty
       win_chocolatey: 
