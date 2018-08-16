@@ -24,10 +24,11 @@
           address_prefix: "20.0.1.0/24"
           virtual_network: "{{ vm_name }}"
 
-      - name: Azure Create Network Security Group that allows SSH and Windows Ports
+      - name: Azure Create Network Security Group that allows SSH and HTTP Ports
         azure_rm_securitygroup:
           resource_group: "{{ resource_group }}"
           name: "{{ vm_name }}"
+          purge_rules: yes
           rules:
             - name: SSH
               protocol: Tcp
@@ -53,25 +54,8 @@
               access: Allow
               priority: 1004
               direction: Inbound
-            - name: RDP
-              protocol: Tcp
-              destination_port_range: 3389
-              access: Allow
-              priority: 500
-              direction: Inbound
-            - name: WINRM
-              protocol: Tcp
-              destination_port_range: 5985
-              access: Allow
-              priority: 501
-              direction: Inbound
-            - name: WINRMs
-              protocol: Tcp
-              destination_port_range: 5986
-              access: Allow
-              priority: 502
-              direction: Inbound
-              
+
+
       # Create windows
       - name: Create windows public IP address
         azure_rm_publicipaddress:
