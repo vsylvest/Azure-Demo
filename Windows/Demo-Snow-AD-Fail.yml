@@ -1,0 +1,19 @@
+---
+- name: Test Incident
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Create an incident
+      snow_record:
+        username: "{{ snow_username }}"
+        password: "{{ snow_password }}"
+        instance: "{{ snow_instance }}"
+        state: present
+        data:
+          short_description: "New Ansible Tower Incident"
+          description: "Installation of Active Directory on Azure has failed"
+          severity: 4
+          priority: 2
+          assigned_to: vsylvest
+      register: win_ad_failed
