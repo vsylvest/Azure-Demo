@@ -22,7 +22,6 @@
           resource_group: "{{ resource_group }}"
           name: "{{ vm_name }}"
           rules:
-
             - name: RDP
               protocol: Tcp
               destination_port_range: 3389
