@@ -15,7 +15,33 @@
       - name: set fact for Extension Code
         set_fact:
           winrm_enable_script: SQBuAHYAbwBrAGUALQBFAHgAcAByAGUAcwBzAGkAbwBuACAALQBDAG8AbQBtAGEAbgBkACAAKAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABTAHkAcwB0AGUAbQAuAE4AZQB0AC4AVwBlAGIAQwBsAGkAZQBuAHQAKQAuAEQAbwB3AG4AbABvAGEAZABTAHQAcgBpAG4AZwAoACcAaAB0AHQAcABzADoALwAvAHIAYQB3AC4AZwBpAHQAaAB1AGIAdQBzAGUAcgBjAG8AbgB0AGUAbgB0AC4AYwBvAG0ALwBhAG4AcwBpAGIAbABlAC8AYQBuAHMAaQBiAGwAZQAvAGQAZQB2AGUAbAAvAGUAeABhAG0AcABsAGUAcwAvAHMAYwByAGkAcAB0AHMALwBDAG8AbgBmAGkAZwB1AHIAZQBSAGUAbQBvAHQAaQBuAGcARgBvAHIAQQBuAHMAaQBiAGwAZQAuAHAAcwAxACcAKQApADsAIABFAG4AYQBiAGwAZQAtAFcAUwBNAGEAbgBDAHIAZQBkAFMAUwBQACAALQBSAG8AbABlACAAUwBlAHIAdgBlAHIAIAAtAEYAbwByAGMAZQA=	
-      
+            - name: Azure Create Network Security Group that allows SSH and Windows Ports
+        
+      - name: Open WINRM Ports in Security Group
+        azure_rm_securitygroup:
+          resource_group: "{{ resource_group }}"
+          name: "{{ vm_name }}"
+          rules:
+
+            - name: RDP
+              protocol: Tcp
+              destination_port_range: 3389
+              access: Allow
+              priority: 500
+              direction: Inbound
+            - name: WINRM
+              protocol: Tcp
+              destination_port_range: 5985
+              access: Allow
+              priority: 501
+              direction: Inbound
+            - name: WINRMs
+              protocol: Tcp
+              destination_port_range: 5986
+              access: Allow
+              priority: 502
+              direction: Inbound
+
       - name: create Azure vm extension to enable HTTPS WinRM listener
         azure_rm_virtualmachine_extension:
           name: winrm-extension

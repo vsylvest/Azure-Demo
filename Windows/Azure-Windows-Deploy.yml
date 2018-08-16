@@ -53,24 +53,6 @@
               access: Allow
               priority: 1004
               direction: Inbound
-            - name: RDP
-              protocol: Tcp
-              destination_port_range: 3389
-              access: Allow
-              priority: 500
-              direction: Inbound
-            - name: WINRM
-              protocol: Tcp
-              destination_port_range: 5985
-              access: Allow
-              priority: 501
-              direction: Inbound
-            - name: WINRMs
-              protocol: Tcp
-              destination_port_range: 5986
-              access: Allow
-              priority: 502
-              direction: Inbound
               
       # Create windows
       - name: Create windows public IP address
@@ -94,7 +76,7 @@
           name: mswin
           vm_size: Standard_DS1_v2
           os_type: Windows
-          admin_username: ec2-user 
+          admin_username: Administrator
           admin_password: Password@123
           network_interfaces: mswin
           tags:
