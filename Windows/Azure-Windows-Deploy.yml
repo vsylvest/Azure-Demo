@@ -76,7 +76,7 @@
           name: mswin
           vm_size: Standard_DS1_v2
           os_type: Windows
-          admin_username: Administrator
+          admin_username: az-user
           admin_password: Password@123
           network_interfaces: mswin
           tags:
