@@ -5,7 +5,7 @@
 ---
 - name:  Basic Windows Playbook
   hosts:
-    azwin
+    mswin
   vars:
     ansible_connection: winrm
     ansible_winrm_server_cert_validation: ignore
