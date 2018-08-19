@@ -14,15 +14,17 @@
     - block:
       - name: Azure Create virtual network
         azure_rm_virtualnetwork:
-          resource_group: "{{ resource_group }}"
           name: "{{ vm_name }}"
-          address_prefixes: "20.0.0.0/16"
+          state: absent
+          resource_group: "{{ resource_group }}"
+
+
       - name: Azure Add subnet
         azure_rm_subnet:
           resource_group: "{{ resource_group }}"
           name: "{{ vm_name }}"
-          address_prefix: "20.0.1.0/24"
-          virtual_network: "{{ vm_name }}"
+          state: absent
+
 
       - name: Azure Create Network Security Group that allows SSH and HTTP Ports
         azure_rm_securitygroup:

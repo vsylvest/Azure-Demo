@@ -21,6 +21,24 @@
           resource_group: "{{ resource_group }}"
           name: "{{ vm_name }}"
           rules:
+            - name: RDP
+              protocol: Tcp
+              destination_port_range: 3389
+              access: Allow
+              priority: 500
+              direction: Inbound
+            - name: WINRM
+              protocol: Tcp
+              destination_port_range: 5985
+              access: Allow
+              priority: 501
+              direction: Inbound
+            - name: WINRMs
+              protocol: Tcp
+              destination_port_range: 5986
+              access: Allow
+              priority: 502
+              direction: Inbound
 
 
       - name: create Azure vm extension to enable HTTPS WinRM listener
