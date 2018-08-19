@@ -19,6 +19,7 @@
       - name: Update Network Security Group that allows RDP and Windows WinRMS Ports
         azure_rm_securitygroup:
           resource_group: "{{ resource_group }}"
+          purge_rules: yes
           name: "{{ vm_name }}"
           rules:
             - name: RDP
